@@ -4,23 +4,21 @@
 #include <SFML/Window/Event.hpp>
 
 
-const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
+const sf::Time Game::TimePerFrame = sf::seconds(1.f/60.f);
 
-#pragma region step 4
 Game::Game()
-	: mWindow(sf::VideoMode(640, 480), "World", sf::Style::Close)
-	, mWorld(mWindow)
-	, mFont()
-	, mStatisticsText()
-	, mStatisticsUpdateTime()
-	, mStatisticsNumFrames(0)
+: mWindow(sf::VideoMode(640, 480), "Key Binding", sf::Style::Close)
+, mWorld(mWindow)
+, mFont()
+, mStatisticsText()
+, mStatisticsUpdateTime()
+, mStatisticsNumFrames(0)
 {
 	mFont.loadFromFile("Media/Sansation.ttf");
 	mStatisticsText.setFont(mFont);
 	mStatisticsText.setPosition(5.f, 5.f);
 	mStatisticsText.setCharacterSize(10);
 }
-#pragma endregion
 
 void Game::run()
 {
@@ -46,27 +44,24 @@ void Game::run()
 
 void Game::processEvents()
 {
+	CommandQueue& commands = mWorld.getCommandQueue();
 	sf::Event event;
 	while (mWindow.pollEvent(event))
 	{
 		switch (event.type)
 		{
-		case sf::Event::KeyPressed:
-			handlePlayerInput(event.key.code, true);
-			break;
-
-		case sf::Event::KeyReleased:
-			handlePlayerInput(event.key.code, false);
-			break;
-
-		case sf::Event::Closed:
-			mWindow.close();
-			break;
+			mPlayer.handleEvent(event, commands);
+			case sf::Event::Closed:
+				mWindow.close();
+				break;
 		}
+
+		mPlayer.handleRealtimeInput(commands);
 	}
 }
 
-#pragma region step 5
+
+
 void Game::update(sf::Time elapsedTime)
 {
 	mWorld.update(elapsedTime);
@@ -74,15 +69,13 @@ void Game::update(sf::Time elapsedTime)
 
 void Game::render()
 {
-	mWindow.clear();
+	mWindow.clear();	
 	mWorld.draw();
 
-#pragma endregion
 	mWindow.setView(mWindow.getDefaultView());
 	mWindow.draw(mStatisticsText);
 	mWindow.display();
 }
-
 
 void Game::updateStatistics(sf::Time elapsedTime)
 {
@@ -94,12 +87,10 @@ void Game::updateStatistics(sf::Time elapsedTime)
 		mStatisticsText.setString(
 			"Frames / Second = " + toString(mStatisticsNumFrames) + "\n" +
 			"Time / Update = " + toString(mStatisticsUpdateTime.asMicroseconds() / mStatisticsNumFrames) + "us");
-
+							 
 		mStatisticsUpdateTime -= sf::seconds(1.0f);
 		mStatisticsNumFrames = 0;
 	}
 }
 
-void Game::handlePlayerInput(sf::Keyboard::Key, bool)
-{
-}
+

@@ -1,4 +1,3 @@
-#pragma region step 1
 #pragma once
 
 #include <ResourceHolder.hpp>
@@ -6,6 +5,8 @@
 #include <SceneNode.hpp>
 #include <SpriteNode.hpp>
 #include <Aircraft.hpp>
+#include <CommandQueue.hpp>
+#include <Command.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -26,11 +27,16 @@ class World : private sf::NonCopyable
 		explicit							World(sf::RenderWindow& window);
 		void								update(sf::Time dt);
 		void								draw();
-
-
+		CommandQueue&						getCommandQueue();
 	private:
+		CommandQueue						mCommandQueue;
 		void								loadTextures();
 		void								buildScene();
+
+#pragma region step 3
+		void								adaptPlayerPosition();
+		void								adaptPlayerVelocity();
+#pragma endregion
 
 
 	private:
@@ -56,4 +62,4 @@ class World : private sf::NonCopyable
 		Aircraft*							mPlayerAircraft;
 };
 
-#pragma endregion
+

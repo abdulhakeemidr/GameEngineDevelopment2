@@ -20,3 +20,4 @@ class SpriteNode : public SceneNode
 		sf::Sprite			mSprite;
 };
 
+
